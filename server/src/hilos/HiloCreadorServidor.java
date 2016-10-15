@@ -2,19 +2,20 @@ package hilos;
 
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HiloCreadorServidor extends Thread {
 	private Socket cliente;
-	private ArrayList<Socket> lista;
+	HashMap<Integer, ArrayList<Socket>> salas;
 	
-	public HiloCreadorServidor(Socket cliente, ArrayList<Socket> lista) {
+	public HiloCreadorServidor(Socket cliente,HashMap<Integer, ArrayList<Socket>> salas) {
 		super();
 		this.cliente = cliente;
-		this.lista = lista;
+		this.salas = salas;
 	}
 	
 	public void run(){
-		new ServidorHilo(cliente, lista).start();
+		new ServidorHilo(cliente, salas).start();
 	}
 	
 
