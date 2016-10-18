@@ -8,13 +8,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import server.Sala;
+
 
 public class ServidorHilo extends Thread{
 	
 	private Socket cliente;
-	HashMap<Integer, ArrayList<Socket>> salas;
+	HashMap<Sala, ArrayList<Socket>> salas;
 	
-	public ServidorHilo(Socket cliente,HashMap<Integer, ArrayList<Socket>> salas) {
+	public ServidorHilo(Socket cliente,HashMap<Sala, ArrayList<Socket>> salas) {
 		super();
 		this.cliente=cliente;
 		this.salas=salas;
@@ -27,9 +29,9 @@ public class ServidorHilo extends Thread{
 			texto = new DataInputStream(cliente.getInputStream()).readUTF();
 			while(!texto.equals("Salir")){
 				System.out.println(texto);
-				Iterator<Integer> iterador = salas.keySet().iterator();
+				Iterator<Sala> iterador = salas.keySet().iterator();
 				while(iterador.hasNext()){
-					int key=iterador.next();
+					Sala key=iterador.next();
 					if(salas.get(key).contains(cliente)){
 						for(Socket lector: salas.get(key)){
 							if(lector!=cliente){
