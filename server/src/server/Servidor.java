@@ -37,29 +37,7 @@ public class Servidor {
 			System.out.println("Servidor en linea");
 			while(i<cantidadMaximaDeClientes){
 				Socket cliente  = servidor.accept();
-				///mandar socket del cliente y sala por Gson
-				String nombreSala = new DataInputStream(cliente.getInputStream()).readUTF();
-				
-				JsonParser parser = new JsonParser();
-			      
-				JsonElement elemento = parser.parse(nombreSala);
-				/*if (elementPimitive.isJsonPrimitive() &&
-				    elementPimitive.getAsJsonPrimitive().isBoolean()){
-				    boolean value = elementPimitive.getAsBoolean();
-				}*/
-				
-				//JsonElement elemento = new JsonPrimitive(nombreSala);
-				JsonObject json = elemento.getAsJsonObject();
-				Sala sala = new Gson().fromJson(json,Sala.class);
-				if(salas.containsKey(sala)){
-					salas.get(sala).add(cliente);
-				}
-				else{
-					ArrayList<Socket> lista = new ArrayList<>();
-					lista.add(cliente);
-					salas.put(sala,lista);
-				}
-				
+							
 				new HiloCreadorServidor(cliente,salas).start();;
 				i++;
 			}

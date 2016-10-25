@@ -1,6 +1,7 @@
 package cliente;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -20,20 +21,30 @@ public class Cliente {
 	private String sala;
 	private int puerto;
 
-	public Cliente(String path,String name,String sala){
+	public Cliente(String path,String name){
 		try {
 			Scanner scanner = new Scanner(new File(path));
 			ip=scanner.nextLine();
 			puerto=scanner.nextInt();
 			scanner.close();
 			this.name=name;
+			String salaElegida="";
 			cliente = new Socket(ip,puerto);
-			JsonObject json = new JsonObject();
-			this.sala=sala;
-			json.addProperty("nombre", sala);
-			
+			do{
+				String salasDisponibles=new DataInputStream(cliente.getInputStream()).readUTF();
+				System.out.println(salasDisponibles+'\n');
+
+				BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
+				salaElegida = buffer.readLine();
+
+
+				JsonObject json = new JsonObject();
+				this.sala=salaElegida;
+				json.addProperty("nombre", sala);
+				new DataOutputStream(cliente.getOutputStream()).writeUTF(json.toString());
+
+			}while(!salaElegida.equals("1")&&!salaElegida.equals("2")&&!salaElegida.equals("3")&&!salaElegida.equals("4"));
 		
-			new DataOutputStream(cliente.getOutputStream()).writeUTF(json.toString());
 			new HiloLectura(cliente).start();
 			new HiloEscritura(cliente,name).start();
 			
@@ -48,10 +59,9 @@ public class Cliente {
 			InputStreamReader leer = new InputStreamReader(System.in);
 			BufferedReader buffer = new BufferedReader(leer);
 			String texto = buffer.readLine();
-			System.out.println("Ingrese sala: Disponibles 1,2,3,4");
-			String sala = buffer.readLine();
+
 			String in = "C:\\Users\\Pablo\\Workspace\\salaChat\\chat.config";
-			new Cliente(in,texto, sala);
+			new Cliente(in,texto);
 		} catch (Exception e) {
 			System.err.println("Se cerro la conexión");
 		}
